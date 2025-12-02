@@ -37,12 +37,18 @@ def add_list(request) -> HttpResponse:
                     "Most likely a list with the same name in the same group already exists.",
                 )
     else:
-        if request.user.groups.all().count() == 1:
-            # FIXME: Assuming first of user's groups here; better to prompt for group
-            form = AddTaskListForm(request.user, initial={"group": request.user.groups.all()[0]})
+        user_groups = request.user.groups.all()
+
+        if user_groups.count() == 1:
+            form = AddTaskListForm(request.user, initial={"group": request.user.groups.first()})
         else:
             form = AddTaskListForm(request.user)
+            messages.info(request,
+                          "Please select which group this list should belong to.")
 
-    context = {"form": form}
+    context = {"form": form,
+               "has_multiple_groups": request.user.groups.all().count() > 1}
 
     return render(request, "todo/add_list.html", context)
+
+

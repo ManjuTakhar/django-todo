@@ -139,7 +139,7 @@ def insert_message(task_list, message, priority, task_title_format):
             task=best_task,
             email_message_id=message_id,
             defaults={"email_from": message_from, "body": text},
-            author=match_user(message_from), # TODO: Write test for this
+            author=match_user(message_from), # BUG(FIXME) :  Author is passed as lookup kwarg instead of passing in defaults, so its never set for new comments
         )
         logger.info("created comment: %r", comment)
 
